@@ -1,0 +1,228 @@
+% Document setup
+%fix-cm -> stellt alle Größen für Computer Modern Schriften bereit
+%cmap   -> verbessert die Anzeige von nicht ASCII Zeichen
+\RequirePackage{fix-cm,cmap}
+%Erzeuge PDF Dokument v1.6
+\pdfoptionpdfminorversion=6
+
+%Dokumentenklasse
+\documentclass[11pt,                  %Schriftgröße 11pt
+a4paper,               %Seitenformat A4
+fleqn,                 %Gleichungen linksbündig
+numbers=noenddot,      %Gliederungsnummern ohne abschließenden Punkt
+parskip=half,          %Absatz -> halbe Zeile vertikal
+headsepline,           %horizontale Linie unter der Kopfzeile
+listof=numbered,       %Nummerierte Aufnahme aller Verzeichnisse in den TOC
+bibliography=numbered, %Nummerierte Aufnahme des Literaturverzeichnisses in den TOC
+twoside,               %zweiseitiges Layout...
+titlepage,             %mit Titelseite			     
+DIV=13,                %Satzspiegelmaß
+BCOR=14mm,             %Bindekorrektur 14mm
+openright,             %neues Kapitel usw. auf der nächsten rechten Seite beginnen
+cleardoublepage=empty, %blanke Seite bei cleardoublepage einfügen
+]{scrreprt}            %KOMA Script Report Klasse
+
+%Kopfzeile
+   \usepackage{fancyhdr}
+   \fancypagestyle{plain}{
+   \fancyhf{}
+   \fancyhead[LE,RO]{\nouppercase{\leftmark}}
+   \fancyfoot[LE,RO]{\thepage}
+  \renewcommand{\headrulewidth}{0.4pt}
+  \renewcommand{\footrulewidth}{0pt}}
+  \pagestyle{plain}
+
+%Um Abstand zur Kopfzeile zu Beginn eines Chapters an das restliche Dokument anzupassen
+%\renewcommand*{\chapterheadstartvskip}{\vspace*{-\topskip}}
+
+%Latex Patches (only needed for tex kernels before 2015)
+%\usepackage{fixltx2e}
+%Englische Silbentrennung
+\usepackage[english]{babel}
+%Bibliography
+\usepackage[backend=biber,style=alphabetic,citestyle=alphabetic,natbib=true]{biblatex}
+
+%deutsche Umlauten
+\usepackage[utf8]{inputenc}
+%8 Bit um den Zeilenumbruch zu verbessern
+\usepackage[T1]{fontenc}
+%Anführungszeichen global einstellen (Text umschlossen von \enquote{})  
+\usepackage[babel]{csquotes}
+%Schöneres Schriftpacket für LateX
+\usepackage{lmodern}
+%Schönerer Textsatz
+\usepackage{microtype}
+%Symbole (inkl. Eurosymbol)
+\usepackage{marvosym}
+
+%Grafiken
+\usepackage{graphicx}
+%Pfad
+\graphicspath{{./figures/}}
+%Einfügen von Bildern in einer Gleitumgebung
+\usepackage{subfig}
+%Bilder von Text umfließen lassen
+\usepackage{wrapfig}
+%Einsatz von FloatBarriers
+\usepackage{placeins}
+%Bildposition mit H erzwingen
+\usepackage{float}
+%Support for FloatingFigure  
+\usepackage{floatflt}
+%Zum Erstellen und geschickten platzieren von Grafiken
+\usepackage{tikz}
+\usetikzlibrary{plotmarks}
+
+%Qualitativ hochwertige Striche für Tabellen 
+\usepackage{booktabs}
+%Ermöglicht komplexe Tabellen
+\usepackage{array}
+\setlength{\extrarowheight}{1pt}
+\usepackage{tabularx}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\arraybackslash}X}
+
+%Mathematische Formeln und Symbole
+\usepackage{latexsym, amsmath, amssymb, amsfonts}
+\usepackage{textcomp}
+\usepackage{romannum}
+%Konsistente Einheiten
+\usepackage{siunitx}
+%Abkürzungsverzeichnis automatisiert erstellen
+%\usepackage[printonlyused]{acronym}
+\usepackage{acronym}
+
+%Einfügen von PDFs
+%\usepackage{pdfpages}
+%Listings
+\usepackage{scrhack}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily}
+%Algorithmen
+\usepackage[ruled, vlined, linesnumbered, algosection, algo2e]{algorithm2e}
+
+%Trademark Symbol
+\def\TTra{\textsuperscript{\texttrademark}}
+
+%Hyperlinks und Menü - kein Paket mehr nach hyperref laden!!!
+\usepackage[bookmarks=true, pdfpagelabels=true]{hyperref}
+\usepackage{bookmark}
+
+%PDF setup
+\hypersetup{
+	colorlinks=true,
+	linkcolor=black,
+	citecolor=black,
+	filecolor=black,
+	urlcolor=black,
+	bookmarksopen=true,
+	bookmarksopenlevel=1,
+	bookmarksnumbered=true,
+	pdfencoding=auto,
+	pdfstartview={FitH},
+	hypertexnames=false,
+	linktocpage=false,
+	plainpages=false,
+	breaklinks=true,
+	%hidelinks,
+	pdfborder={0 0 0.5}
+}
+
+%Benutzerdefinierte Farben
+%  \definecolor{Myblue}{RGB}{0 0 100}
+
+%Benutzerdefinierte Commands
+\makeatletter
+\newcommand\studyprogram[1]{\renewcommand\@studyprogram{#1}}
+\newcommand\@studyprogram{\@latex@error{No \noexpand\studyprogram given}\@ehc}
+\newcommand\thesistype[1]{\renewcommand\@thesistype{#1}}
+\newcommand\@thesistype{\@latex@error{No \noexpand\thesistype given}\@ehc}
+\newcommand\examiner[1]{\renewcommand\@examiner{#1}}
+\newcommand\@examiner{\@latex@error{No \noexpand\examiner given}\@ehc}
+\newcommand\supervisor[1]{\renewcommand\@supervisor{#1}}
+\newcommand\@supervisor{\@latex@error{No \noexpand\supervisor given}\@ehc}
+\makeatother
+
+\newcommand{\chap}[2]{
+	\chapter{#1}
+	\markboth{\thechapter~#1}{}
+	\input{chapters/#2}
+	\cleardoublepage  
+}
+\newcommand{\leadingzero}[1]{\ifnum #1<10 0\the#1\else\the#1\fi}
+\newcommand{\Today}{\leadingzero{\day}.\leadingzero{\month}.\the\year}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DO NOT EDIT ABOVE THIS LINE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Bib file
+\addbibresource{literature.bib} 
+
+% General infos
+  \author{Author Name}
+  \title{Thesis Title}
+  \date{\Today}
+  %\date{01.01.2016}
+  \studyprogram{INFOTECH (Information Technology)}
+  \thesistype{Master}
+  %\thtyp{Bachelor}
+  \examiner{Prof. Dr.-Ing. Martin Radetzki}
+  \supervisor{M.Sc. Manuel Strobel}
+
+\makeatletter
+\hypersetup{
+  pdftitle = {\@title},
+  pdfauthor = {\@author},
+  pdfsubject={\@thesistype Thesis (\@studyprogram)},
+  pdfkeywords={University of Stuttgart, Embedded Systems Department, ITI, \@thesistype Thesis}
+}
+
+\begin{document}
+% Include the cover page
+
+  \input{chapters/coverpage}
+  %\includepdf[pages={1}]{pdfs/cover_sheet.pdf}
+\cleardoubleemptypage
+
+
+% Preface
+\pagenumbering{roman}
+\input{chapters/abstract}
+\cleardoubleemptypage
+
+% TOC
+\hypertarget{Table of Contents}{}
+\pdfbookmark[0]{Table of Contents}{Table of Contents} 
+\tableofcontents
+\cleardoublepage
+
+% Content
+\pagenumbering{arabic}
+\chap{Introduction}{introduction}
+
+% Appendix
+\begin{appendix}
+\chap{Appendix}{appendix}
+
+% Lists (Figures, Listings, Abbreviations)
+\listoffigures
+\markboth{\thechapter~List of Figures}{}
+%\lstlistoflistings
+
+\chapter{List of Abbreviations}
+  \markboth{\thechapter~List of Abbreviations}{}
+  \input{chapters/abbreviations}
+\end{appendix}
+
+% References
+\nocite{*} % causes all references to be included (even if not cited)
+\printbibliography[heading=bibintoc]
+
+% Declaration
+\cleardoubleemptypage
+  \input{chapters/declaration}
+  %\includepdf[pages={2}]{pdfs/cover_sheet.pdf}
+
+\makeatother
+\end{document}
