@@ -1,59 +1,43 @@
 \label{chap:introduction}
-Introduction goes here...
-
+	\section{Memory power optimization}
+	\label{sec:memory_power_optim}
+	In the field of embedded systems design nowadays, power consumption has become one of the most important design factors especially in the domain of Systems-on-Chip. One of the important issues to design power-efficient embedded system is the power consumed by memories and memory related components. Some researchers have claimed that large fraction of power is dissipated by
+	memories \cite{876761, 4415607}. Thus, memory power optimization plays a significant role in the design of power-efficient embedded systems.One of the most effective and common approaches to reduce memory power consumption is the memory partitioning method which is proposed in several articles and books \cite[p.43]{Strobel2016, 876761, 4415607, Hiser:2005:EAP:1088093, macii2002memory}.
+	The rationale of memory partitioning is , on the one hand, to split one single large memory into several small memory instances which can be accessed individually \cite{4415607}. On the other hand, according to the memory access patterns, frequently accessed address ranges are grouped to smaller memory instances while seldom accessed address ranges are grouped 
+	to the larger ones \cite{Strobel2016}.
+	The memory power optimization is one of the combinatorial optimizations since the process is to find the optimal solution from a finite solution space of a problem set. There are many algorithms that can be applied to solve this kind of problems in the domain of combinatorial optimization.
+	One approach is the integer linear programming (ILP) which solves the optimization problem through a 
+	mathematical model described by certain integer linear relationship. This approach is proposed in
+	\cite{Strobel2016} for the memory power optimization. Another commonly applied approach is the
+	heuristic algorithm which is based on searching mechanisms. Many classical combinatorial optimization
+	problems such as traveling sales man (TSP) problem have been solved by using heuristic algorithms.
+	
+	Heuristic is a technique that searches for a near optimal solution of a optimization problem within
+	a reasonable time. It is often used when the exact optimal solution can not be found by the conventional
+	algorithms. When solving a optimization problem with a very large solution space, the algorithms trying to
+	find the exact optimal solution may be ideal. However, the computation time of such algorithms may be not
+	acceptable in practice. In such cases, the user of heuristic can find a good solution in a reasonable
+	time. Though the solution provided by heuristic may not be the exact optimal one, it still can be
+	considered as a valuable solution of the optimization problem. One key feature of heuristic is the
+	trade-off between efficiency and precision. The solution quality and the computation time can be balanced by
+	users according to their requirements.
+	
+	The goal of this thesis work is to apply heuristics for the purpose of memory power optimization. Firstly, multiple potential
+	heuristics are theoretical examined and compared. Secondly, the most promising algorithm is identified and proposed for the
+	optimization goal. Then the selected heuristic is adapted to a formal power model which is defined in \cite{Strobel2016}.
+	Lastly,  
+	
+	
+	
+	
+	The rest of this work is organized as follows.
+	Chapter 2 discusses the related researches for the memory power optimization and heuristics. In Chpater 3, some potential
+	heuristics are theoretical examined and compared. Simulated annealing, the most promising algorithm, is proposed for the 
+	optimization objective. A detailed introduction for the simulated annealing algorithm is given in Chpater 4. Chpter 5 represents
+	the implementation process for optimizing memory power consumption using simulated annealing. Chapter 6 discusses the evaluation
+	of the partial results and the conclusion is represented in Chapter 7.
 %---------------------------------------------------------------------
-\section{Motivation}
-\label{sec:motivation}
-Digitalization is ubiquitous these days, no matter if one considers individual
-or economical aspects. This trend is accompanied by rising volumes of data and
-increasing computationally expensive applications. To cope with related
-challenges and in order to serve demands of the market, \enquote{[...] the
-computer industry has been driven by an endless quest for more and more
-computing power [...]} \cite[p.517 f.]{Tanenbaum.2014}. For decades, increasing
-miniaturization along with rising clock speed has been the fundamental approach
-in order to advance the performance of processors and digital chips in
-general. Unfortunately, there are some considerable limits, wherefore
-researchers more and more began to investigate parallelism to continuously
-achieve more computing power \cite[p.517 f.]{Tanenbaum.2014}.
 
-%\noindent\rule{\linewidth}{0.4pt}
-\vspace{2cm}
-
-Figure example:
-\begin{figure}[H]
-	\begin{center}
-		\includegraphics[width=0.7\textwidth]{topologies}
-		\caption[Common On-Chip Network Topologies]{Common On-Chip Network Topologies}
-		\label{fig:topologies}
-	\end{center}
-\end{figure}
-
-As illustrated in figure \ref{fig:topologies} ...
-
-\newpage
-Table example:
-\begin{table}[H]
-  \begin{center}
-	  \small
-	  \begin{tabularx}{0.7\textwidth}{|L!{\vrule width1.2pt}c|c|c|}
-		  \hline
-		  \textbf{Maximum Speedup} & 8x8 NoC & 16x16 NoC & 32x32 NoC \\  \specialrule{1.2pt}{0pt}{0pt}
-		  Group - Size 2 & 9.26 & 54.69 & 113.18 \\ \hline
-		  Group - Size 3 & 6.98 & 43.98 & 117.88 \\ \hline
-		  Group - Size 4 & 5.7 & 34.56 & 108.85 \\ \hline
-	  \end{tabularx}
-	  \normalsize
-	  \caption[Maximum Speedup Values]{Maximum Speedup Values}
-    \label{tab:speedup}
-  \end{center}
-\end{table}
-
-Compare table \ref{tab:speedup} ...
-
-\vspace{2cm}
-Abbreviation example:\\
-\acf{MPSoC}\\
-\ac{MPSoC}\\
 
 %---------------------------------------------------------------------
 % ...

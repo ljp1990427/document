@@ -1,0 +1,27 @@
+\begin{algorithm2e}
+	\KwData{an optimization problem, algorithm parameters}
+	\KwResult{an optimal solution}
+	current solution = initial solution\;
+	best-so-far solution = initial solution\;
+	set tabu list as empty\;
+	set algorithm parameters\;
+	\While{not terminate}
+	{
+		generate a set of neighboring solutions\;
+		evaluate neighboring solutions\;
+		\eIf{aspiration criterion satisfied}
+		{
+			update current solution\;
+			update tabu list\;
+			update best-so-far solution\;
+		}
+		{
+			tabu move\;
+			update current solution\;
+			update tabu list\;
+		}
+	}
+	output current solution\;
+	\caption{Tabu Search Algorithm}
+	\label{algo:tabu_search}
+\end{algorithm2e}
