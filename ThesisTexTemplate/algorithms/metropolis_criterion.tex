@@ -1,0 +1,13 @@
+\begin{algorithm2e}[h]
+	\KwData{current solution, neighboring solution, t}
+	\KwResult{the selected solution}
+	\eIf{current solution is better}
+	{
+		accept the neighboring solution\;
+	}
+	{
+		p = $\exp{\left( -\frac{neighboring solution cost-current solution cost}{t} \right)}$\;
+	}
+	\caption{Metropolis Criterion}
+	\label{algo:metropolis_criterion}
+\end{algorithm2e}
