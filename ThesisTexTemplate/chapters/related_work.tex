@@ -1,0 +1,98 @@
+\label{chap:related_work}
+The memory partitioning method is widely used for the memory power
+optimization problem. Many researchers have obtained good results
+and benefits through the usage of this approach
+\cite{Strobel2016, 876761, 4415607}.
+The detail development of the mathematic power model discussed in
+Section \ref{sec:memory_partition} is illustrated in \cite{Strobel2016}.
+In this article, M. Strobel et al. propose the the ILP approach to
+be used in the optimization of the memory partitioning. And the results
+from their experiments show that the usage of ILP can yield an optimal
+configuration for their problem set. Since the memory partitioning is
+one kind of the combinatorial optimization, heuristics can also be a
+potential approach for it.
+
+The combinatorial optimization is one of the hottest topics which
+aims to search for an optimal solution in a finite solution space.
+Most pf the conventional methods such as exhaustive search is not a proper
+approach for it.
+S. Kirkpatrick et al. find that there existing a close relationship
+between the statistical mechanics and the combinatorial optimization
+\cite{10.2307/1690046}.
+Based on this finding, they propose the simulated annealing algorithm
+as a promising approach for the combinatorial optimization in
+\cite{10.2307/1690046}.
+They introduce the metropolis criterion and explain how it can be
+applied to improve the solution quality provided by local search
+algorithm. In the article, the simulated annealing process is
+developed to be consisted of a parameterized framework which is already
+discussed in Section \ref{subsec:simulated_annealing}. To illustrate
+the usability of the simulated annealing algorithm, S. Kirkpatrick et al.
+deploy the algorithm in the physical design of computers to optimize the
+circuits partitioning, placement and wiring processes.
+In addition, they also apply the simulated annealing algorithm to the classical
+traveling salesmen problem. Multiple experiments for above optimization
+problems are conducted in this article and the experiment results are
+used to show that good solutions can be obtained by the usage of the
+simulated annealing algorithm. It is also pointed out by S. Kirkpatrick et al.
+that the accuracy and efficiency of the algorithm are much dependent on
+its parameters. Their suggestions for the algorithm setting are discussed
+together with other's work later in this chapter.
+
+In \cite{doi:10.1287/opre.37.6.865}, the author implement the simulated 
+annealing algorithm for the graph partitioning problem.
+And a deep evaluation for the algorithm is made through a compact series
+of experiments in the article.
+They propose an alternative for the design of the cooling schedule and 
+compared it with the original method using in \cite{10.2307/1690046}.
+The cooling schedule implemented by S. Kirkpatrick et al. is to reduce
+the temperature linearly by a colling ration.
+In \cite{doi:10.1287/opre.37.6.865}, the author develop an adaptive
+cooling schedule which slows down the temperature reduction when the solution
+cost is changing fast in the current searching region. However, no improvement
+to the linear cooling schedule is found in their conducted experiments.
+For the terminations of the nested loops, they terminate the inner loop when
+the maximum number of iterations are achieved. And a low threshold of the
+acceptance probability is used for the termination of the outer loop.
+Unfortunately, there is no method proposed to the determination of the initial
+temperature in \cite{doi:10.1287/opre.37.6.865}.
+
+In \cite{10.2307/1690046}, S. Kirkpatrick et al. suggest two methods to determine
+the initial temperation $T_{0}$. The first one is to use the maximum difference
+between two neighboring solution costs as the initial temperature. The other one
+is described as following. An initial acceptance probability $P_{0}$ is defined
+which is the expected acceptance probability at $T_{0}$.
+Its value should be a real number close but less than 1, typically in the range of
+0.8 to 0.95.
+Then a random guess of $T_{0}$ is made and the inner loop of
+simulated annealing is performed at this temperature. The solution
+acceptance ration of the inner loop performance is measured. And if the
+acceptance ration is lower than $P_{0}$, the value of $T_{0}$ is doubled.
+The same process is repeated until the measured acceptance
+ration is higher than $P_{0}$.
+Based on the second suggest of S. Kirkpatrick et al., Johnson et al.
+provide Equation \ref{equa:t_0_average} in \cite{Johnson:1991:OSA:108188.108193}
+for the estimation of the initial temperature.
+\begin{equation}
+\label{equa:t_0_average}
+	T_{0}= - \dfrac{\overline{\Delta E}}{\ln P_{0}}
+\end{equation}
+The $\overline{\Delta E}$ in the equation is the average difference 
+between two neighboring solution costs. The value of
+$\overline{\Delta E}$ can be measured by generating a set of positive
+solution acceptances.
+Another determination is proposed
+by the authors of \cite{white1984concepts}.
+They estimate the initial temperature $T_{0}$ by using Equation
+\ref{equa:t_0_secod_moment}, where
+\textquotedblleft
+$K$ is a fixed number in the range of 5 to 10 and
+$\sigma^{2}_{\infty}$ is the second moment of the cost distribution 
+when the temperature is infinite
+\textquotedblright \cite{Ben-Ameur2004}.
+However, this approach requires the analysis base on the pre-knowledge
+of the solution cost distribution.
+\begin{equation}
+\label{equa:t_0_secod_moment}
+T_{0} = K \sigma^{2}_{\infty}
+\end{equation}

@@ -1,59 +1,32 @@
 \label{chap:introduction}
-Introduction goes here...
-
+	Nowadays in the field of embedded systems design , power consumption has become one of the most important design factors especially in the domain of Systems-on-Chip. One of the important issues to design power-efficient embedded system is the power consumed by memories and memory related components. Some researchers have claimed that large fraction of power is dissipated by memories \cite{4415607, 876761}. Thus, memory power optimization plays a significant role in the design of power-efficient embedded systems.
+	One of the most effective and common approaches to reduce memory power consumption is the memory partitioning method which is proposed in several articles and books \cite[p.43]{876761, Hiser:2005:EAP:1088093, macii2002memory}.
+	
+	The rationale of memory partitioning is , on the one hand, to split one single large memory into several small memory instances which can be accessed individually \cite{4415607}. On the other hand, according to the memory access patterns, frequently accessed address ranges are grouped to smaller memory instances while rarely accessed address ranges are grouped to the larger ones \cite{Strobel2016}.
+	The memory partitioning is one of the combinatorial optimizations since the process is to find the optimal memory configuration from a set of memories and applications. There are many methods that can be applied in the domain of combinatorial optimization. One approach is the integer linear programming (ILP) which solves the optimization problem through a mathematical model described by certain integer linear relationship. This approach is proposed in \cite{Strobel2016} for the memory power optimization using memory partitioning method.
+	Another commonly deployed approach is the heuristic which is based on searching mechanisms. In many classical combinatorial optimization
+	problems such as traveling sales man (TSP) problem, heuristics have been deployed and near optimal solutions have been provided by using them.
+	
+	When dealing with an optimization problem with a very large solution space, the algorithms that are used to find the exact optimal solution may be ideal. However, the required execution time of such algorithms may be unacceptable in practice. Even in some problem sets, the exact optimal solution can not be found by the conventional algorithms. In such cases, the user of heuristics can obtain a near optimal solution within a reasonable time frame. Though the solution provided by heuristics may be not the exact optimal one, it still can be considered as a valuable solution of the optimization problem. One key feature of heuristics is the trade-off between algorithm efficiency and precision. The solution quality and the execution time of the algorithm can be balanced by users according to their different requirements.
+	
+	The goal of this thesis work is to apply heuristics for the purpose of the memory power optimization using memory partitioning method.
+	The targeted problem set is the same which is used in \cite{Strobel2016}.
+	Firstly, multiple potential heuristics are theoretical examined. After the comparison between them, the most promising algorithm is identified and proposed for the optimization objective.
+	Secondly, the selected heuristic is adapted to a existing formal power model which is proposed in \cite{Strobel2016}.
+	Then the framework of the chosen algorithm along with its parameters are realized for the power model.
+	Lastly, the evaluation of the implemented heuristic is performed. The optimal solutions found by the chosen algorithm are compared with the
+	obtained results in \cite{Strobel2016}.
+	
+	The structure of this document is organized as following.
+	Chapter \ref{chap:basics} introduces the basic knowledge of the memory partitioning method and the formal memory power model.
+	Besides, the discussion of potential heuristics are made. And in this chapter, the first goal of this thesis work is achieved by proposing
+	the simulated annealing algorithm according to the comparison between the discussed heuristics.
+	Chapter \ref{chap:related_work} discusses the related works for the memory power reduction and the simulated annealing algorithm.
+	Chapter \ref{chap:main_work} represents the design details of the simulated annealing for the memory power optimization using memory partitioning method.
+	The evaluation of the simulated annealing algorithm results is given in Chapter \ref{chap:evaluation}.
+	And Chapter \ref{chap:conclusion} concludes this thesis work.
 %---------------------------------------------------------------------
-\section{Motivation}
-\label{sec:motivation}
-Digitalization is ubiquitous these days, no matter if one considers individual
-or economical aspects. This trend is accompanied by rising volumes of data and
-increasing computationally expensive applications. To cope with related
-challenges and in order to serve demands of the market, \enquote{[...] the
-computer industry has been driven by an endless quest for more and more
-computing power [...]} \cite[p.517 f.]{Tanenbaum.2014}. For decades, increasing
-miniaturization along with rising clock speed has been the fundamental approach
-in order to advance the performance of processors and digital chips in
-general. Unfortunately, there are some considerable limits, wherefore
-researchers more and more began to investigate parallelism to continuously
-achieve more computing power \cite[p.517 f.]{Tanenbaum.2014}.
 
-%\noindent\rule{\linewidth}{0.4pt}
-\vspace{2cm}
-
-Figure example:
-\begin{figure}[H]
-	\begin{center}
-		\includegraphics[width=0.7\textwidth]{topologies}
-		\caption[Common On-Chip Network Topologies]{Common On-Chip Network Topologies}
-		\label{fig:topologies}
-	\end{center}
-\end{figure}
-
-As illustrated in figure \ref{fig:topologies} ...
-
-\newpage
-Table example:
-\begin{table}[H]
-  \begin{center}
-	  \small
-	  \begin{tabularx}{0.7\textwidth}{|L!{\vrule width1.2pt}c|c|c|}
-		  \hline
-		  \textbf{Maximum Speedup} & 8x8 NoC & 16x16 NoC & 32x32 NoC \\  \specialrule{1.2pt}{0pt}{0pt}
-		  Group - Size 2 & 9.26 & 54.69 & 113.18 \\ \hline
-		  Group - Size 3 & 6.98 & 43.98 & 117.88 \\ \hline
-		  Group - Size 4 & 5.7 & 34.56 & 108.85 \\ \hline
-	  \end{tabularx}
-	  \normalsize
-	  \caption[Maximum Speedup Values]{Maximum Speedup Values}
-    \label{tab:speedup}
-  \end{center}
-\end{table}
-
-Compare table \ref{tab:speedup} ...
-
-\vspace{2cm}
-Abbreviation example:\\
-\acf{MPSoC}\\
-\ac{MPSoC}\\
 
 %---------------------------------------------------------------------
 % ...
