@@ -1,0 +1,22 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {english}
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.5}
+\contentsline {chapter}{\numberline {2}Basics}{3}{chapter.6}
+\contentsline {section}{\numberline {2.1}Memory partitioning and formal power model}{3}{section.7}
+\contentsline {section}{\numberline {2.2}Heuristics}{6}{section.19}
+\contentsline {subsection}{\numberline {2.2.1}Local search algorithm}{7}{subsection.20}
+\contentsline {subsection}{\numberline {2.2.2}Tabu search algorithm}{8}{subsection.32}
+\contentsline {subsection}{\numberline {2.2.3}Simulated annealing algorithm}{10}{subsection.54}
+\contentsline {section}{\numberline {2.3}Heuristics selection}{13}{section.75}
+\contentsline {chapter}{\numberline {3}Related Work}{15}{chapter.76}
+\contentsline {chapter}{\numberline {4}Simulated Annealing for Memory Power Optimization}{17}{chapter.79}
+\contentsline {section}{\numberline {4.1}Input data organization}{17}{section.81}
+\contentsline {chapter}{\numberline {5}Evaluation}{21}{chapter.107}
+\contentsline {chapter}{\numberline {6}Conclusion}{23}{chapter.108}
+\contentsline {chapter}{\numberline {A}Appendix}{25}{appendix.109}
+\contentsline {chapter}{\numberline {B}List of Figures}{27}{appendix.110}
+\contentsline {chapter}{\numberline {C}List of Algorithms}{29}{appendix.111}
+\contentsline {chapter}{\numberline {D}List of Tables}{31}{appendix.112}
+\contentsline {chapter}{\numberline {E}List of Abbreviations}{33}{appendix.113}
+\contentsline {chapter}{\nonumberline Bibliography}{35}{chapter*.114}
