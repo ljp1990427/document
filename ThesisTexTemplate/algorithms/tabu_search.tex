@@ -1,0 +1,30 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[htb]
+	\KwIn{an optimization problem, algorithm parameters}
+	\KwOut{an optimal solution}
+	set algorithm parameters\;
+	current solution = initial solution\;
+	best-so-far solution = initial solution\;
+	set tabu list as empty\;
+	\While{not terminate}
+	{
+		generate a set of neighboring solutions\;
+		evaluate neighboring solutions\;
+		\eIf{aspiration criterion satisfied}
+		{
+			execute aspiration criterion\;
+			update current solution\;
+			update tabu list\;
+			update best-so-far solution\;
+		}
+		{
+			execute tabu move\;
+			update current solution\;
+			update tabu list\;
+		}
+	}
+	output current solution\;
+	\caption{Tabu Search Algorithm}
+	\label{algo:tabu_search}
+\end{algorithm2e}
+\setlength{\floatsep}{0.2cm}

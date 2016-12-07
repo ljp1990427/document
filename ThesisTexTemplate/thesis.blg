@@ -1,0 +1,18 @@
+[0] Config.pm:354> INFO - This is Biber 2.6
+[0] Config.pm:357> INFO - Logfile is 'thesis.blg'
+[51] biber-MSWIN32:302> INFO - === 
+[226] Biber.pm:359> INFO - Reading 'thesis.bcf'
+[366] Biber.pm:820> INFO - Using all citekeys in bib section 0
+[387] Biber.pm:3658> INFO - Processing section 0
+[415] Biber.pm:3828> INFO - Looking for bibtex format file 'literature.bib' for section 0
+[424] bibtex.pm:1425> INFO - Decoding LaTeX character macros into UTF-8
+[430] bibtex.pm:1282> INFO - Found BibTeX data source 'literature.bib'
+[459] Utils.pm:164> WARN - month field 'Oct' in entry '4415607' is not an integer - this will probably not sort properly.
+[502] Utils.pm:164> WARN - month field 'July' in entry '876761' is not an integer - this will probably not sort properly.
+[537] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[537] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[537] Biber.pm:3487> INFO - Sorting list 'anyt/global/' of type 'entry' with scheme 'anyt' and locale 'en-US'
+[537] Biber.pm:3493> INFO - No sort tailoring available for locale 'en-US'
+[556] bbl.pm:597> INFO - Writing 'thesis.bbl' with encoding 'UTF-8'
+[561] bbl.pm:701> INFO - Output to thesis.bbl
+[562] Biber.pm:109> INFO - WARNINGS: 2
