@@ -1,0 +1,19 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[htb]
+	\KwIn{an optimization problem}
+	\KwOut{an optimal solution}
+	current solution = initial solution\;
+	\While{not terminate}
+	{
+		generate a neighboring solution\;
+		evaluate the neighboring solution\;
+		\If{neighboring solution is better than current solution}
+		{
+			current solution = neighboring solution\;
+		}
+	}
+	output current solution\;
+	\caption{Local Search Algorithm}
+	\label{algo:local_search}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}

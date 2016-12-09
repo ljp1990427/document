@@ -1,0 +1,22 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[t]
+	\KwIn{$S_{curr}$}
+	\KwOut{$S_{neigh}$}
+	create a new solution $S_{neigh}$\;
+	\While{ConstraintsCheck($S_{neigh}$) is false}
+	{
+		$S_{neigh}=S_{curr}$\;
+		randomly selecte an element $element_{i}$ in $S_{neigh}$\;
+		\eIf{$element_{i}$ is in the allocation part}
+		{
+			$element_{i}$ = Rondom number in $Range_{allocation}$\;
+		}
+		{
+			$element_{i}$ = Rondom number in $Range_{binding}$\;
+		}
+	}
+	output $S_{neigh}$ \;
+	\caption{$Neighbor()$}
+	\label{algo:neighbor_1}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}

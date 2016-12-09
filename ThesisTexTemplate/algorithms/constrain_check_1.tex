@@ -1,0 +1,26 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[h]
+	\KwIn{$S_{neigh}$}
+	\KwOut{a boolean value}
+		compute $area_{total}$\;
+		\eIf{$area_{total}>area_{max}$}
+		{
+			\Return false\;
+		}
+		{
+			\ForEach {memory type $mt_{i}$}
+				{
+					find all profiles bound to $mt_{i}$\;
+					compute the memory $mem_{required}$ required by these profiles\;
+					compute the memory $mem_{provided}$ provided by $mt_{i}$\;
+					\If{$mem_{provided}<mem_{required}$}
+					{
+						\Return false\;
+					}
+				}
+				\Return true\;
+		}
+	\caption{$ConstraintsCheck()$}
+	\label{algo:constrain_check_1}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}

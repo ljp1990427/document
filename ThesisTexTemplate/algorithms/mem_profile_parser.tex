@@ -1,0 +1,19 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[H]
+	\KwIn{a memory\textbackslash profile data file, a memory container\textbackslash application object}
+	\KwOut{void}
+	\While{not end of the file}
+	{
+		read one line\;
+		\If{relevant data is contaied in the line}
+		{
+			extract the data\;
+			convert the extracted data into the corresponding type\;
+			create a memory\textbackslash profile object based on the converted data\;
+			add the created object into the list of the memroy container\textbackslash application object\;
+		}
+	}
+	\caption{Parse Memory\textbackslash Profile Data File}
+	\label{algo:mem_profile_parser}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}
