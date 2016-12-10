@@ -100,6 +100,9 @@ cleardoublepage=empty, %blanke Seite bei cleardoublepage einfügen
 \lstset{basicstyle=\ttfamily}
 %Algorithmen
 \usepackage[ruled, vlined, linesnumbered, algosection, algo2e]{algorithm2e}
+\usepackage{algorithm}
+\usepackage{enumerate} 
+
 
 %Trademark Symbol
 \def\TTra{\textsuperscript{\texttrademark}}
@@ -107,6 +110,7 @@ cleardoublepage=empty, %blanke Seite bei cleardoublepage einfügen
 %Hyperlinks und Menü - kein Paket mehr nach hyperref laden!!!
 \usepackage[bookmarks=true, pdfpagelabels=true]{hyperref}
 \usepackage{bookmark}
+
 
 %PDF setup
 \hypersetup{
@@ -160,8 +164,8 @@ cleardoublepage=empty, %blanke Seite bei cleardoublepage einfügen
 \addbibresource{literature.bib} 
 
 % General infos
-  \author{Author Name}
-  \title{Thesis Title}
+  \author{Li Jinpeng}
+  \title{Heuristics for Design Time Optimization of System-on-Chip Memory Power Consumption}
   \date{\Today}
   %\date{01.01.2016}
   \studyprogram{INFOTECH (Information Technology)}
@@ -200,6 +204,13 @@ cleardoublepage=empty, %blanke Seite bei cleardoublepage einfügen
 % Content
 \pagenumbering{arabic}
 \chap{Introduction}{introduction}
+\chap{Basics}{basics}
+\chap{Related Work}{related_work}
+\chap{Simulated Annealing for Memory Power Optimization}{main_work}
+\chap{Evaluation}{evaluation}
+\chap{Conclusion}{conclusion}
+
+
 
 % Appendix
 \begin{appendix}
@@ -209,6 +220,8 @@ cleardoublepage=empty, %blanke Seite bei cleardoublepage einfügen
 \listoffigures
 \markboth{\thechapter~List of Figures}{}
 %\lstlistoflistings
+\listofalgorithms
+\listoftables
 
 \chapter{List of Abbreviations}
   \markboth{\thechapter~List of Abbreviations}{}

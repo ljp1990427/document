@@ -1,0 +1,17 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[t]
+	\KwIn{$S_{\alpha,curr}$}
+	\KwOut{$S_{\alpha,neigh}$}
+	create a new solution $S_{\alpha,neigh}$\;
+	\While{$ConstraintsCheck_{\alpha}$($S_{\alpha,neigh}$) is false}
+	{
+		$S_{\alpha,neigh}=S_{\alpha,curr}$\;
+		randomly selecte an element $element_{i}$ in $S_{\alpha,neigh}$\;
+		increase or decrease $element_{i}$ by 1\;
+	}
+	\Return $S_{\alpha,neigh}$ \;
+	\caption{$Neighbor_{\alpha}()$}
+	\label{algo:neighbor_alfa}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}
+
