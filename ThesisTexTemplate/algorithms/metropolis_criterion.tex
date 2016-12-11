@@ -1,0 +1,22 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[h]
+	\KwIn{$C_{curr},C_{neigh},T$}
+	\KwOut{void}
+	\eIf{$C_{curr} \leq C_{neigh}$}
+	{
+		$S_{curr}=S_{neigh}$\;
+		$C_{curr}=C_{neigh}$\;
+	}
+	{
+		$P_{accept}=\exp{\left( -\frac{C_{neigh}-C_{curr}}{T} \right)}$\;
+		$R = Random()$\;
+		\If{$R \leq P_{accept}$}
+		{
+			$S_{curr}=S_{neigh}$\;
+			$C_{curr}=C_{neigh}$\;	
+		}
+	}
+	\caption{Metropolis Criterion Precedure}
+	\label{algo:metropolis}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}

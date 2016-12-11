@@ -1,0 +1,18 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[h]
+	\KwIn{$S_{\alpha,curr}$, $S_{\beta}$}
+	\KwOut{$S_{\alpha,neigh}$}
+		create a $S_{\alpha,neigh}$\;
+		\While{($ConstraintsCheck_{alpha}(S_{\alpha,neigh})$ $\&$ SortedBind($S_{\alpha,neigh}$,$S_{\beta}$)) is false}
+		{
+			$S_{\alpha,neigh}=S_{\alpha,curr}$\;
+			select an allocated memory type $mt_{allocated}$ in $S_{\alpha,curr}$\;
+			select an arbitrary memory type $mt_{arbitrary}$ in $S_{\alpha,curr}$\;
+			delete an instance for $mt_{allocated}$ in $S_{\alpha,neigh}$\;
+			add an instance for $mt_{arbitrary}$ in $S_{\alpha,neigh}$\;
+		}
+		\Return $S_{\alpha,neigh}$\;
+	\caption{$Neighbor_{\alpha}$()}
+	\label{algo:sa_alfa_neigh_1}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}

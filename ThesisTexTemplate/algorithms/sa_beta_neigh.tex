@@ -1,0 +1,19 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[h]
+	\KwIn{$S_{\alpha},S_{\beta,curr}$}
+	\KwOut{$S_{\beta,neigh}$}
+	create a new solution $S_{\beta,neigh}$\;
+	\While{$ConstraintsCheck_{\beta}$($S_{\beta,neigh}$) is false}
+	{
+		$S_{\beta,neigh}=S_{\beta,curr}$\;
+		randomly selecte an element $element_{i}$ in $S_{\beta,neigh}$\;
+		identify the set of allocated memory types $memtypes_{allocated}$ in $S_{\alpha}$\;
+		randomly selecte an memory type $memtype_{j}$ in $memtypes_{allocated}$\;
+		$element_{i}$ = index of $memtype_{j}$ in $S_{\alpha}$\;
+	}
+	\Return $S_{\beta,neigh}$ \;
+	\caption{$Neighbor_{\beta}()$}
+	\label{algo:neighbor_beta}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}
+

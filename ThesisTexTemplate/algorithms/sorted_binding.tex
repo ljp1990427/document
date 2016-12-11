@@ -1,0 +1,28 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[htb]
+	\KwIn{$S_{\alpha}$,$S_{\beta}$}
+	\KwOut{a boolean value}
+		sort memory types in ascending order according to size\;
+		\eIf{ROM mode}
+		{
+			sort profiles in descending order according to $d \cdot p_{r}$\;
+		}
+		{
+			sort profiles in descending order according to $d \cdot \left( p_{r} + p_{w} \right)$\;
+		}
+		\ForEach {$profile_{i}$ in $S_{\beta}$}
+		{
+			in $S_{\alpha}$, find the smallest memory type $mt$ that has enough free space for $profile_{i}$\;
+			bind $profile_{i}$ to $mt$\;
+		}
+		\eIf{$S_{\beta}$ satisfies constraint 4}
+		{
+			\Return true\;
+		}
+		{
+			\Return false\;
+		}
+	\caption{$SortedBind()$}
+	\label{algo:sort_bind}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}
