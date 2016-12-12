@@ -1,0 +1,30 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\select@language {english}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Local Optimum Trap}}{7}{figure.caption.31}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Tabu Search's Avoidance to Local Optimum Trap\relax }}{10}{figure.caption.53}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Simulated Annealing's Avoidance to Local Optimum Trap\relax }}{12}{figure.caption.74}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Process of The Simulated Annealing for Memory Power Optimization\relax }}{17}{figure.caption.80}
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Input Parameter Organization in UML Diagram\relax }}{18}{figure.caption.82}
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Fragments of The Input Parameter Data Files \cite {Strobel2016}\relax }}{19}{figure.caption.83}
+\contentsline {figure}{\numberline {4.4}{\ignorespaces Simulate Annealing Design Flow\relax }}{21}{figure.caption.112}
+\contentsline {figure}{\numberline {4.5}{\ignorespaces A Solution Example\relax }}{22}{figure.caption.122}
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Neighboring Solutions Example\relax }}{23}{figure.caption.123}
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Results Comparison Between Simulated Annealing and ILP\relax }}{26}{figure.caption.167}
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Neighboring Solutions Example for $SA_{\beta }$\relax }}{29}{figure.caption.190}
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Nested Simulated Annealing Procedure\relax }}{30}{figure.caption.202}
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Results Comparison Between $SA_{\beta }$ and ILP\relax }}{32}{figure.caption.206}
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Example For Generating Invalid $S_{\alpha }$\relax }}{33}{figure.caption.208}
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Allocation Optimization Levels with $mems_{max}=4$\relax }}{34}{figure.caption.225}
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\addvspace {10\p@ }

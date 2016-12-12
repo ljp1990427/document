@@ -1,0 +1,26 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[H]
+	\KwIn{an interconnect data file}
+	\KwOut{an interconnect object}
+		create an interconnect object\;
+		\While{not end of the file}
+		{
+			read one line\;
+			\If{relevant data is contaied in the line}
+			{
+				extract the data\;
+				convert the extracted data into the corresponding type\;
+				\eIf{is current data}
+				{
+					add the converted data into the current list of the interconnect object\;
+				}
+				{
+					add the converted data into the area list in of interconnect object\;
+				}
+			}
+		}
+		\Return the interconnect object\;
+	\caption{Parse Interconnect Data File}
+	\label{algo:ic_parser}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}

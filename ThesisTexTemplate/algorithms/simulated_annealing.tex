@@ -1,0 +1,28 @@
+\begin{algorithm2e}[h]
+	\KwData{an optimization problem, algorithm parameters}
+	\KwResult{an optimal solution}
+	set algorithm parameters\;
+	current solution = initial solution\;
+	t = initial tempreture\;
+	\While{not terminate}
+	{
+		\While{not terminate}
+		{
+			generate a neighboring solution\;
+			evaluate the neighboring solution\;
+			\eIf{neighboring solution is better}
+			{
+				accept neighboring solution\;
+			}
+			{
+				comput the accept probability\;
+				accept neighboring solution according to the accept probability\;
+			}
+			update current solution\;
+		}
+		decrease t\;
+	}
+	\Return current solution\;
+	\caption{Simulated Annealing Algorithm}
+	\label{algo:simulated_annealing}
+\end{algorithm2e}
