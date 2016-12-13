@@ -1,0 +1,19 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[h]
+	\KwIn{$S_{\alpha,neigh}$}
+	\KwOut{a boolean value}
+		compute $mems_{total}$\;
+		compute $area_{total}$\;
+		compute $space_{provided}$\;
+		compute $space_{required}$\;
+		\eIf{$mems_{total} \leq mems_{max} \text{ $\&$ } area_{total} \leq area_{max} \text{ $\&$ } space_{provided} \geq space_{required}$}
+		{
+			\Return true\;
+		}
+		{
+			\Return false\;
+		}
+	\caption{$ConstraintsCheck_{\alpha}()$}
+	\label{algo:constrain_check_a}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}

@@ -1,0 +1,1004 @@
+\label{chap:main_work}
+In this chapter, the main contents of the thesis work are represented.
+Figure \ref{fig:framework} shows the process of the memory power
+optimization using the simulated annealing algorithm.
+There are two kinds of input for the simulated annealing algorithm.
+One is the input data related to the optimization problem.
+These raw data is recorded in different text files. Their data
+structure is not suitable for the simulate annealing algorithm.
+Thus, a proper input data organization is defined and a parsing
+method is used to transform the raw data into this data organization.
+Section \ref{sec:input_organ} discusses the input data organization
+and the parsing method in detail.
+The other kind of input for the algorithm is the algorithm parameter
+that is discussed together with the algorithm design.
+Section \ref{sec:sa_design_flow} introduces an abstract design flow of
+the simulated annealing.
+Section \ref{sec:stage_1} to Section \ref{sec:stage_3} discuss the
+design details and problems of three different approaches for the memory
+power optimization.
+\begin{figure}[H]
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{optim_framework}
+		\caption{Process of The Simulated Annealing for Memory Power Optimization}
+		\label{fig:framework}
+	\end{center}
+\end{figure}
+	\section{Input data organization}
+	\label{sec:input_organ}
+	As discussed in Section \ref{sec:memory_partition}, the formal
+	power model requires the parameters that are relevant to the
+	memory types, the application profiles and the interconnect.
+	Thus, these parameters are the input data to the simulated
+	annealing algorithm.
+	Since the object oriented programming is planned to be used for
+	the implementation of the simulated annealing, the parameters
+	that are related to the same type can be grouped together into
+	one class. For example, the physical parameters that are
+	relevant to memory types can reside in the memory class.
+	Figure \ref{fig:uml} shows the input parameters
+	organization in the form of the UML class diagram.
+	\begin{figure}[htb]
+		\begin{center}
+			\includegraphics[width=0.7\textwidth]{uml_class}
+			\caption{Input Parameter Organization in UML Diagram}
+			\label{fig:uml}
+		\end{center}
+	\end{figure}
+	
+	The memory class includes all the physical parameters that are used in the
+	formal power model.  Since there are a set of memory types in the
+	data file, a set of objects of the memory class will be created in
+	the simulated annealing algorithm as well. Thus the memory container
+	class is defined to store memory objects.
+	The algorithm can also retrieve the required objects and the
+	total number of memory objects through the corresponding operations
+	in the memory container class.
+	The profile class and the application class are defined similarly
+	to the memory class and the memory container class respectively.
+	The interconnect class is different. It uses two separated lists to store the
+	current and area parameters whose value are dependent on the total
+	number of instances. These parameters can also be retrieved by the
+	simulated annealing algorithm through the corresponding operations
+	defined in the interconnect class.
+	\begin{figure}[h]
+		\begin{center}
+			\subfloat[][]
+			{
+				\includegraphics[width=0.7\textwidth]{mem_data}
+				\label{subfig:mem_data}
+			}
+			\qquad
+			\subfloat[][]
+			{
+				\includegraphics[width=0.7\textwidth]{profile_data}
+				\label{subfig:profile_data}
+			}
+			\qquad
+			\subfloat[][]
+			{
+				\includegraphics[width=0.4\textwidth]{ic_data}
+				\label{subfig:ic_data}
+			}
+		\end{center}
+		\caption{Fragments of The Input Parameter Data Files \cite{Strobel2016}}
+		\label{fig;input_data}
+	\end{figure}
+
+	In this thesis work, the same data sets provided by the authors of \cite{Strobel2016}
+	are used as the input parameter data of the simulated
+	annealing algorithm. They are recorded in multiple
+	plain text data files. Figure \ref{fig;input_data} represents some fragments
+	of these data files. Figure \ref{subfig:mem_data} is the fragment of the
+	memory data file. Figure \ref{subfig:profile_data} shows the fragment of the
+	application profile data file and Figure \ref{subfig:ic_data} is the
+	fragment of the interconnect data file. In order to group this data
+	into the designed input data organization, a
+	parsing method is used. The basic idea of the parsing method is to read the
+	plain text file line by line. The required data is extracted and the
+	unnecessary data is discarded. Since the data file is text-based,
+	the required data are converted into the corresponding data type during the
+	extraction.
+
+	\input{./algorithms/mem_profile_parser}
+	
+	Algorithm \ref{algo:mem_profile_parser} is the pseudo-code of
+	the parsing method for the memory and profile data files. If the method is
+	used to parse the memory data file, it first reads one line of the file text.
+	Then it checks whether there is the relevant data contained in the line or not.
+	If there is no data, the the algorithm continues reading the next line.
+	Otherwise, the relevant data is extracted and converted into the corresponding
+	data type.
+	It can be seen from the file fragment in Figure \ref{subfig:mem_data}, all the
+	parameters data related to one memory type are listed in one single line.
+	Thus, a memory object can be created based on the parsed data
+	for one line. Then the created object is added to the list in the memory container
+	object. The same parsing step is repeated until the method reaches the end of
+	the file. The parsing process of the application profile data file is similar
+	to the parsing of the memory data file.
+	The only differences are that it deals with the profile data file and
+	profile objects are created and added to the list of the application object.
+	However, the parsing method of the interconnect data file is modified slightly.
+	Algorithm \ref{algo:ic_parser} shows the pseudo-code of the parsing method for
+	the interconnect data file.
+	From the file fragment in Figure \ref{subfig:ic_data} it can be seen that there
+	are two parts in the interconnect data file.
+	The first part contains the interconnect current data while the second part
+	records the interconnect area data. Thus, after the extracted data is converted,
+	the parsing method needs to check whether the data is related to the current or
+	the area. Then the data is added to the corresponding list of the interconnect
+	object.
+	
+	\input{./algorithms/ic_parser}
+	
+	\section{Abstract SA design flow}
+	\label{sec:sa_design_flow}
+	The major design of the simulated annealing for the memory power optimization is
+	the algorithm structure. Before the design details are introduced, an abstract
+	design flow of the simulated annealing algorithm is provided in Figure
+	\ref{fig:sa_framwork}. From the figure it can be seen that the algorithm is
+	consisted of three parts.
+	In the initialization of the algorithm, $S_{curr}$ is
+	the current solution. It is set to an initial solution $S_{0}$. $C_{curr}$ is the
+	cost of $S_{curr}$ and it is calculated according to $S_{0}$. The temperature
+	$T$ is set to an initial value $T_{0}$.
+	The second part of the algorithm is the inner loop. $S_{neigh}$ is the neighboring
+	solution generated by the method $Neighbor()$ based on $S_{curr}$. Its cost
+	$C_{neigh}$ is calculated by the cost function $Cost()$. Then the metropolis
+	criterion $Metropolis()$ is performed to update $S_{curr}$ according
+	to $C_{curr}$ and $C_{neigh}$.
+	$Termination_{inner}()$ is the termination mechanism for the inner loop.
+	The last part of the algorithm is the outer loop. $CoolingSchedule()$ is used to
+	decrease $T$. $Termination_{outer}()$ is the termination mechanism for the outer loop.
+	\begin{figure}[htb]
+		\begin{center}
+			\includegraphics[width=0.7\textwidth]{sa_flow}
+			\caption{Simulate Annealing Design Flow}
+			\label{fig:sa_framwork}
+		\end{center}
+	\end{figure}	
+
+	The design of the simulated annealing should contains the answers of the following
+	Questions \ref{ques:1} to \ref{ques:7}. To enhance the readability of the rest of this
+	chapter, the design details will answer these questions sequentially.
+	By providing a solution for each of these questions, the design for the
+	simulated annealing algorithm is completed.
+	\begin{enumerate} [\text{Question} 1:]
+		\item What is the representation of solutions?
+		\label{ques:1}
+		\item How to generate neighboring solutions?
+		\label{ques:2}
+		\item What is the cost function?
+		\label{ques:3}
+		\item How to implement the metropolis criterion?
+		\label{ques:4}
+		\item What is the cooling schedule?
+		\label{ques:5}
+		\item How to determinate the initial solution and the initial temperature?
+		\label{ques:6}
+		\item How to terminate the inner loop and the outer loop?
+		\label{ques:7}
+	\end{enumerate}
+
+	\section{Allocation and binding in single SA}
+	\label{sec:stage_1}
+	This approach is to seek for the optimal memory allocation and the
+	binding of profiles simultaneously in a single simulated annealing
+	algorithm.
+	Section \ref{subsec:design_1} gives the answers of the design
+	questions and Section \ref{subsec:problem_1} discusses the
+	problems of this approach.
+		\subsection{Design process}
+		\label{subsec:design_1}
+		Question \ref{ques:1}: What is the representation of solutions?
+		
+		As discussed in Section \ref{sec:memory_partition}, the result of the memory
+		partitioning process is a configuration for the memory system.
+		The solution provided by the simulated annealing algorithm should correspond
+		to the memory configuration. According to this, solutions of the simulated
+		annealing algorithm are definedas following.
+		A solution is in the form of an integer vector that are divided
+		into two parts. The first part of the vector corresponds to the allocation
+		of memories.
+		Each element in this part is the number of memory instances of the corresponding
+		memory type.
+		The second part of the vector contains the information about the binding of profiles.
+		Each element in this part is the index of the memory type to which the corresponding
+		profile is bound.
+		Therefore, the vector length is the sum of the number of memory types and the
+		number of profiles.
+		To be clear, the first part of the vector is called the allocation part of
+		the solution and the second part of the vector is called the binding part
+		of the solution. The vector length is called the solution size.
+		Figure \ref{fig:solu_exam_1} shows a solution example with two memory types and
+		three application profiles.
+		In the allocation part of the solution, one instance is allocated for both
+		memory types.
+		In the binding part, profile 0 is bound to memory type 0.
+		Profile 1 and 2 are both bound to memory type 1.
+		\begin{figure}[h]
+			\begin{center}
+				\includegraphics[width=0.7\textwidth]{solution_example_1}
+				\caption{A Solution Example}
+				\label{fig:solu_exam_1}
+			\end{center}
+		\end{figure}
+
+		Question \ref{ques:2}: How to generate neighboring solutions?
+		
+		According to the solution representation, the neighboring solutions are described
+		as following. 
+		A neighboring solution is a vector with same length of the
+		original solution. Only one element in the neighboring solution is different from the
+		original solution.
+		Figure \ref{fig:neigh_solu_exam_1} shows an example of neighboring solutions.
+		The original solution is the same in Figure \ref{fig:solu_exam_1}.
+		In neighboring solution 1, two memory instances are allocated for memory type 0
+		while only one instance is allocated in the original solution.
+		The rest elements of neighboring solution 1 are the same with the original solution.
+		In neighboring solution 2, the only difference to the original solution is that
+		profile 2 is bound to memory type 0.
+		\begin{figure}[h]
+			\begin{center}
+				\includegraphics[width=0.7\textwidth]{neigh_example_1}
+				\caption{Neighboring Solutions Example}
+				\label{fig:neigh_solu_exam_1}
+			\end{center}
+		\end{figure}
+
+		In this approach, the basic idea of $Neighbor()$ is to modify one element from the
+		current solution. When generating neighboring solutions, the constraints of the formal
+		power model should be taken into consideration.
+		To ensure the constrain 1 and 3, the modification of the chosen element is limited in a
+		range. As the solution is consisted of two different parts, the ranges of these
+		two parts are also different.
+		Let $Range_{\alpha}$ and $Range_{\beta}$ denote the modification ranges for
+		the allocation part and the binding part respectively.
+		The lower bound of $Range_{\alpha}$ is 0. The upper bound of $Range_{\alpha}$ is
+		computed as following.
+		Let $mems_{total}$ denote the total number of memory instances in the current solution.
+		Suppose element $i$ in the allocation part is selected to be modified.
+		Let $mem_{i}$ denotes the number of instances of memory type $i$ in the current solution.		
+		Then the upper bound of $Range_{\alpha}$ equals $(mems_{max}-mems_{total}+mem_{i})$.
+		$mems_{max}$ is the predefined constraint in the Equation \ref{equa:constraint_1}.
+		For $Range_{\beta}$, its lower bound is 0.
+		Let $Num_{memtype}$ denote the total number of memory types in the memory set.
+		The upper bound of $Range_{\beta}$ is $(Num_{memtype}-1)$.
+		
+		Algorithm \ref{algo:neighbor_1} is the pseudo-code of $Neighbor()$.
+		In the algorithm, there is another method $ConstraintsCheck()$.
+		This method is used to examine whether the generated neighboring solutions satisfy the
+		constrain 2 (Equation \ref{equa:constraint_2}) and constraint 4
+		(Equation \ref{equa:constraint_4}) of the power model.
+		Algorithm \ref{algo:constrain_check_1} shows the pseudo-code of $ConstraintsCheck()$.
+		It first checks whether the area constraint $area_{max}$ is satisfied
+		or not.
+		$area_{total}$ is the total area consumed by the allocated memory instances and the interconnect.
+		Then for each memory type, $ConstraintsCheck()$ examines whether enough memory space is
+		provided for the profiles that are bound to the memory type.
+		\input{./algorithms/neighbor_1}
+		\input{./algorithms/constrain_check_1}
+
+		Question \ref{ques:3}: What is the cost function?
+		
+		Because the solution of the simulated annealing algorithm corresponds to the
+		memory configuration, the solution cost $C$ is defined as the average power
+		consumption of the configuration. The cost function $Cost()$ is designed
+		based on the formal power model that is introduced in Section
+		\ref{sec:memory_partition}. All the relevant parameter data required by the
+		power model can be fetched from the input parameter organization.
+	
+		Question \ref{ques:4}: How to implement the metropolis criterion?
+	
+		The procedure of the metropolis criterion is straightforward and its
+		implementation is illustrated in Algorithm \ref{algo:metropolis}.
+		Because the goal of the power memory optimization is to reduce the
+		power consumption, the solution with lower cost is considered as the
+		better one in the metropolis criterion.
+		A random real number $R$ is generated by the method $Random()$.
+		This method only generates real numbers that are uniformly distributed in the
+		range of 0 to 1 due to that $R$ is compared with the acceptance probability
+		$P_{accept}$.
+	
+		\input{./algorithms/metropolis_criterion}
+	
+		Question \ref{ques:5}: What is the cooling schedule?
+		
+		For the cooling schedule, the temperature $T$ is linearly reduced with a fixed
+		cooling ration $R_{cool}$.
+		Equation \ref{equa:cooling_sche} is the design of $CoolingSchedule()$, where
+		$N$ is the number of outer loop iterations.
+		The value of the $R_{cool}$ should be a positive real number and
+		it must be less than 1 in order to decrease $T$.
+		However, it is a non-trivial task to determine a proper value for $R_{cool}$
+		In this approach, the value of $R_{cool}$ is set to 0.9 first and it can be
+		adjusted base on experiments.
+		\begin{equation}
+		\label{equa:cooling_sche}
+			T_{N+1}=R_{cool} \cdot T_{N}
+		\end{equation}
+		
+		Question \ref{ques:6}: How to determinate the initial solution and the
+		initial temperature?
+		
+		The initial solution $S_{0}$ of the simulated annealing algorithm can be set
+		to a given solution manually.
+		In this approach, $S_{0}$ is set as following.
+		Only one larger enough memory instance is allocated so that all application
+		profiles can be bound to it.
+		
+		For the determination of the initial temperature $T_{0}$, the initial acceptance
+		probability $P_{0}$ is defined.
+		As Kirkpatrick et al. propose in the original article,
+		$P_{0}$ is the expected acceptance probability of worser solutions at $T_{0}$
+		\cite{10.2307/1690046}.
+		In this approach, $T_{0}$ is computed by Equation \ref{equa:t_0_1} based
+		on the metropolis criterion (Equation \ref{equa:metropolis_equation}).
+		In the equation, $\left( C_{neigh}-C_{curr} \right)_{max}$
+		is the maximum cost difference between a worser neighboring solution and the current
+		solution.
+		It can be measured by generating a set of worser neighboring solutions of the
+		current solution randomly.
+		The value of $P_{0}$ should be a positive real number less than 1.
+		It should be close to 1 because the neighboring solutions are randomly
+		accepted at $T_{0}$.
+		$P_{0}$ is set to 0.9 in this approach and it can be adjusted based on experiments.
+		\begin{equation}
+		\label{equa:t_0_1}
+			T_{0}= - \frac{\left( C_{neigh}-C_{curr} \right)_{max} }{ln{P_{0}}}
+		\end{equation}
+		
+		Question \ref{ques:7}: How to terminate the inner loop and the outer loop?
+		
+		For the inner loop of the simulated annealing algorithm, the
+		number of iterations is limited to a maximum number $Max_{iteration}$.
+		During the execution of the inner loop, the number of iterations
+		$Num_{iteration}$ is counted.
+		When $Num_{iteration}$ becomes larger than $Max_{iteration}$, the inner
+		loop terminates.
+		The value of $Max_{iteration}$ is related to the size of the
+		neighborhood $Size_{neighbor}$. $Size_{neighbor}$ is defined as the number
+		of neighboring solutions of the current solution.
+		In this approach, it is fixed to the solution size for simplification.
+		Equation \ref{equa:iteration_innerloop} illustrates how to calculate the
+		value of $Max_{iteration}$.
+		From the equation it can be seen that $Max_{iteration}$ is proportional
+		to $Size_{neighbor}$ with a factor $F_{iteration}$.
+		The value of $F_{iteration}$ should be a positive real number.
+		In this approach, $F_{iteration}$ is set to be 1 and it can also be
+		modified based on experiments.
+		\begin{equation}
+		\label{equa:iteration_innerloop}
+			Max_{iteration}=F_{iteration} \cdot Size_{neighbor}
+		\end{equation}
+		
+		For the outer loop termination, a low temperature limit $T_{low}$ is defined.
+		When the temperature $T$ is decreased to $T_{low}$, the outer loop terminates.
+		The determination of $T_{low}$ is similar to the determination of $T_{0}$.
+		$P_{low}$ is defined as the expected acceptance probability at $T_{low}$.
+		Then $T_{low}$ is computed according to Equation \ref{equa:t_low_1}.
+		In the equation, $\left( C_{neigh}-C_{curr} \right)_{min}$ is the minimum cost
+		difference between a worser neighboring solution and the current solution.
+		It can be measured by generating a set of worser neighboring solutions randomly
+		as well. The value of $P_{low}$ should be a positive real number close to 0
+		because the simulated annealing algorithm behaves like the local search algorithm
+		at $T_{low}$. The worser neighboring solutions are seldom accepted.
+		In this approach, the value of $P_{low}$ is set to 0.1 and it can be adjusted
+		base on experiments.
+		\begin{equation}
+		\label{equa:t_low_1}
+			T_{low}= - \frac{\left( C_{neigh}-C_{curr} \right)_{min}}{ln{P_{low}}}
+		\end{equation}	
+	
+		\subsection{Problem discussion}
+		\label{subsec:problem_1}
+		For the evaluation of the design approach, the input data and the ILP results
+		provided by the authors of \cite{Strobel2016} are used.
+		The input data includes the parameters of 79 different memory types
+		and the parameters of the interconnect.
+		There are 4 applications, namely $IP reassembly$, $IP check$, $MD5$ and
+		$Huffman$ \cite{Strobel2016}. Each application has $RAM$ and $ROM$ modes.
+		The input data also contains the profile details for each of the applications.
+		In this approach, the following testing scenario is designed.
+		Parameter data of all 79 memory types along with the interconnect
+		data are input to the simulated annealing algorithm.
+		The application $IP reassembly$ in $ROM$ mode with its 241 profiles are used.
+		The algorithm parameters are set according to the discussion in Section
+		\ref{subsec:design_1}.
+		The maximum number of instances $mems_{max}$ is limited to 8.
+		There is no area constraint. $area_{max}$ is set to a large enough value.
+		Figure \ref{fig:stage_1_result} shows the results of the designed simulated
+		annealing algorithm and they are compared with the ILP results.
+		After analyzing the algorithm execution process and its results,
+		the following problems are found.
+		\begin{figure}[h]
+			\begin{center}
+				\includegraphics[width=0.7\textwidth]{stage_1_result}
+				\caption{Results Comparison Between Simulated Annealing and ILP}
+				\label{fig:stage_1_result}
+			\end{center}
+		\end{figure}	
+	
+		Problem 1: Solutions always reaches $mems_{max}$.
+		
+		From Figure \ref{fig:stage_1_result} it can be seen that
+		every solution provided by the designed simulated annealing
+		algorithm contains 8 memory instances. This is due
+		to the $ConstraintsCheck()$ in $Neighbor()$.
+		When $S_{neigh}$ is generated by modifying an element in the allocation
+		part of $S_{curr}$, $ConstraintsCheck()$ makes the probability of increasing
+		the element higher than the probability of decreasing the element.
+		Increasing the element satisfies the constraints because it allocates
+		more memory instance than required by the profiles.
+		However, decreasing the element may violate the constraints because it reduces
+		the number of memory instances. This may result in that the memory type does
+		not have enough memory space for the profiles.
+		
+		Another phenomenon found in
+		the algorithm behavior is that the searching process will stick to a very small
+		region once the solution allocates 8 memory instances. The reason of this
+		phenomenon is described as following. Firstly, a memory type is called allocated
+		if it has at least one memory instance. Let $memtypes_{allocated}$ denote the
+		set of allocated memory types in $S_{curr}$. Let $memtypes$ denote the set of
+		all memory types provided by the input data. According to the testing scenario,
+		$\lvert memtypes_{allocated} \rvert \leq 8$, and $\lvert memtypes \rvert = 79$.
+		Suppose $S_{curr}$ already contains 8 memory instances. $S_{neigh}$ is generated
+		by modifying an element from the allocation part of $S_{curr}$.
+		The probability of selecting one allocated memory type in $S_{curr}$ is
+		$\dfrac{\lvert memtypes_{allocated} \rvert}{\lvert memtypes \rvert}$.
+		In the best case, $\lvert memtypes_{allocated} \rvert = 8$.
+		The probability is $\dfrac{8}{79} \approx 0.1$. This means that most of the time,
+		$Neighbor()$ selects a memory type that is not allocated. It can neither increase
+		nor decrease the element because there are already 8 memory instances allocated.
+		Even if it is lucky to select an allocated memory type, the modification range
+		$Range_{\alpha}$ of the element is rather small. For this reason, the searching
+		process sticks to a small neighborhood of $S_{curr}$.
+		
+		Problem 2: Generating neighboring solutions is time consuming.
+		
+		After monitoring the execution time for different parts of the algorithm,
+		it is found that the large fraction of the execution time is consumed
+		by $Neighbor()$. It is still because of the $ConstraintsCheck()$ in $Neighbor()$.
+		When generating $S_{neigh}$ by modifying an element in the binding part of
+		$S_{curr}$, the probability of changing the selected element to the
+		index of an allocated memory type is still calculated by
+		$\dfrac{\lvert memtypes_{allocated} \rvert}{\lvert memtypes \rvert}$.
+		In the testing scenario, it is $\dfrac{8}{79} \approx 0.1$ for the best case.
+		This means that most of the time, the selected profile is bound to a memory
+		type that is not allocated. Even if the profile is lucky to be bound to an
+		allocated memory type, it may violate the constraints as well because the
+		allocated memory type may have no enough space for it.
+		Besides, Problem 1 also contributes to the time consumption.
+		These two problems make the overall execution time of the designed simulated
+		algorithm rather long.
+		
+		Problem 3: No convergence for the power cost.
+		
+		In Figure \ref{fig:stage_1_result}, the results of the simulated annealing
+		is different for each execution.
+		Because in each execution, the searching process sticks to different
+		small region due to Problem 1. This is similar to the local optimum trap.
+		Besides, the quality of the binding part is not guaranteed as well.
+		
+		The above problems make the designed simulated annealing algorithm an
+		improper approach for the memory power optimization. However, in the next
+		section, a nested simulated annealing structure is introduced to solve
+		these problems.
+		
+	\section{Allocation and binding in nested SA}
+	\label{sec:stage_2}
+	From the approach discussed in Section \ref{sec:stage_1}, finding the optimal
+	allocation and the binding at the same time seems to be problematical.
+	In this approach, the memory partitioning is divided into two related sub-processes.
+	One is the optimization for the memory allocation and the other one is the
+	optimization for the profile binding.
+	The allocation optimization is dependent on the result of the binding optimization.
+	The simulated annealing algorithm is used for both sub-processes.
+	To be simplified, let $SA_{\alpha}$ denote the simulated annealing algorithm for the
+	allocation optimization and let $SA_{\beta}$ denote the simulated annealing algorithm
+	for the binding optimization. Then the basic idea of this approach is to use $SA_{\beta}$
+	as the cost function of $SA_{\alpha}$.
+	Section \ref{subsec:design_2} answers the seven design questions.
+	Section \ref{subsec:problem_2} discusses the problems of this approach.
+	
+		\subsection{Design process}
+		\label{subsec:design_2}
+		Question \ref{ques:1}: What is the representation of solutions?
+		
+		In the approach discussed in Section \ref{sec:stage_1}, the solution for the
+		simulated annealing algorithm is consisted of the allocation part and the
+		binding part. In this approach, the allocation part is defined as the
+		solution of $SA_{\alpha}$ while the binding part is defined as the solution
+		of $SA_{\beta}$. To be simplified, let $S_{\alpha}$ and $S_{\beta}$ denote
+		the solutions of $SA_{\alpha}$ and $SA_{\beta}$ respectively.
+		
+		Question \ref{ques:2}: How to generate neighboring solutions?
+		
+		Let $Neighbor_{\alpha}$ and $Neighbor_{\beta}$ denote the neighboring
+		solution generating method of $SA_{\alpha}$ and $SA_{\beta}$ respectively.
+		Instead of modifying the chosen element according to a limited range,
+		$Neighbor_{\alpha}$ increases or decreases the element by one. 
+		The probabilities of the increase and decrease are both 0.5.
+		But if the original value of the chosen element is 0, it can only be
+		increased because the element should be positive.
+		Algorithm \ref{algo:neighbor_alfa} is the pseudo-code for $Neighbor_{\alpha}()$.
+		In the algorithm, $S_{\alpha,curr}$ is the current solution of
+		$SA_{\alpha}$ and $S_{\alpha,neigh}$ is its neighboring solution.
+		Similar to the Algorithm \ref{algo:neighbor_1}, the method
+		$ConstraintsCheck_{\alpha}()$ is used to check whether $S_{\alpha,neigh}$
+		satisfies the constraints or not.
+		In this approach, the constraints of the power model are divided to two
+		groups as well.
+		Specially, a two-step implementation of the constraint 4 verification
+		is made in this approach.
+		Let $space_{provided}$ denotes the memory spaces provided by all allocated
+		memory types in the current solution.
+		Let $space_{required}$ denote the memory space required by all profiles.
+		Then the first step of constraint 4 verification is to examine whether
+		$space_{provided}$ is less than $space_{required}$ or not. This step is
+		called constraint 4-1 verification.
+		The second step is the same procedure of $ConstraintsCheck()$
+		(Algorithm \ref{algo:constrain_check_1}) discussed in Section \ref{subsec:design_1}.
+		But it excludes the checking for area constraint. This step is called
+		constraint 4-2 verification.
+		Then constraint 1, 2 and 4-1 are grouped together and they are called $Constraint_{\alpha}$.
+		Constraint 3 and 4-2 are called $Constraint_{\beta}$.
+		Algorithm \ref{algo:constrain_check_a} shows the pseudo-code for $ConstraintsCheck_{\alpha}()$.
+		In the algorithm, $mems_{total}$ is the total number of memory instances allocated in
+		$S_{\alpha,neigh}$ and $area_{total}$ is the total area consumed by the memory
+		instances and the interconnect.
+		$mems_max$ and $area_max$ are the predefined constraints in
+		the formal power model.
+		\input{./algorithms/sa_alfa_neigh}
+		\input{./algorithms/constrain_check_a}
+	
+		For $SA_{\beta}$, $Neighbor_{\beta}()$ is more complicated than
+		$Neighbor_{\alpha}()$. It is based on the solution of $SA_{\alpha}$.
+		The basic idea of $Neighbor_{\beta}()$ is to randomly select one profile
+		and bind it to another allocated memory type.
+		To make the $Neighbor_{\beta}()$ clear, an example is given in
+		Figure \ref{fig:sa_beta_neigh_example}.
+		From the figure it can be seen that there are three
+		memory types in $S_{\alpha}$ and there are three profiles in $S_{\beta}$.
+		The allocated memory types are memory type 0 and 2 because they have at least one instances.
+		In the current solution of $SA_{\beta}$, profile 0 is bound to
+		memory type 2.
+		When generating neighboring solution 1, profile 0 is chosen and it is changed to
+		be bound to memory type 0.
+		In neighboring solution 2, profile 2 is changed to be bound to memory type 2
+		as well.
+		The selected profiles can not be bound to memory type 1 because it is not allocated.
+		\begin{figure}[h]
+			\begin{center}
+				\includegraphics[width=0.7\textwidth]{sa_beta_neigh_example}
+				\caption{Neighboring Solutions Example for $SA_{\beta}$}
+				\label{fig:sa_beta_neigh_example}
+			\end{center}
+		\end{figure}		
+	
+		Algorithm \ref{algo:neighbor_beta} shows the pseudo-code of
+		$Neighbor_{\beta}()$.
+		In the algorithm, $memtypes_{allocated}$ is the set of allocated
+		memory types in $S_{\alpha}$.
+		$S_{\beta,curr}$ and $S_{\beta,neigh}$ are the current and 
+		neighboring solutions of $SA_{\beta}$.
+		The method $ConstraintsCheck_{\beta}$ is also used to check whether
+		$S_{\beta,neigh}$ satisfy the $Constraint_{\beta}$. It is same to
+		Algorithm
+		\ref{algo:constrain_check_1} without the area constraint verification.
+		Through binding the chosen profile to an allocated memory type,
+		many invalid neighboring solutions are avoided. This reduces the
+		execution time consumed by $Neighbor_{\beta}()$.		
+		\input{./algorithms/sa_beta_neigh}
+	
+		Question \ref{ques:3}: What is the cost function?
+	
+		In $SA_{\beta}$, the solution cost is still the memory power consumption
+		that can be calculated according to the power model. The cost function is
+		the same one introduced in the first approach.
+		
+		In $SA_{\alpha}$, there is no real cost for the its solution $S_{\alpha}$
+		because $S_{\alpha}$ only contains the information about the memory allocation.
+		Thus, the memory power consumption can not be calculated according to the
+		power model.
+		However, the cost function of $SA_{\alpha}$ evokes the procedure of $SA_{\beta}$.
+		Then $SA_{\beta}$ optimizes the binding based on the current solution
+		of $SA_{\alpha}$. After $SA_{\beta}$ terminates, it provides a binding with
+		the minimum memory power consumption to the cost function of $SA_{\alpha}$.
+		$SA_{\alpha}$ sets the minimum power consumption as its solution cost.
+		Figure \ref{fig:nested_call} shows the nested simulated annealing procedure.
+		In the figure, $C_{\alpha}$ and $C_{\beta}$ are the solution cost for $SA_{\alpha}$
+		and $SA_{\beta}$ respectively.
+		\begin{figure}[htb]
+			\begin{center}
+				\includegraphics[width=0.7\textwidth]{nested_call}
+				\caption{Nested Simulated Annealing Procedure}
+				\label{fig:nested_call}
+			\end{center}
+		\end{figure}
+
+		Question \ref{ques:4}: How to implement the metropolis criterion?
+
+		In this approach, the metropolis criterion of both $SA_{\alpha}$ and
+		$SA_{\beta}$ are implemented the same with the first approach.
+		
+		Question \ref{ques:5}: What is the cooling schedule?
+		
+		The same cooling schedule (Equation \ref{equa:cooling_sche}) introduced
+		in the first approach is used for both $SA_{\alpha}$ and $SA_{\beta}$.
+		
+		Question \ref{ques:6}: How to determinate the initial solution and the
+		initial temperature?
+		
+		Both $SA_{\alpha}$ and $SA_{\beta}$ use the same mechanism introduced in
+		the first approach.
+		
+		Question \ref{ques:7}: How to terminate the inner loop and the outer loop?
+	
+		For the inner loop termination, Equation \ref{equa:iteration_innerloop} is still used.
+		However, the neighborhood sizes of $SA_{\alpha}$ and $SA_{\beta}$
+		are described as following.
+		The neighborhood size $Size_{neighbor,\alpha}$ is calculated according
+		to Equation \ref{equa:neighbor_size_a}.
+		The length of $S_{\alpha}$ is actually the total number of memory types
+		in the memory set.
+		\begin{equation}
+		\label{equa:neighbor_size_a}
+			Size_{neighbor,\alpha}=2 \cdot \text{length of } S_{\alpha} 
+		\end{equation}
+		Because $SA_{\beta}$ is embedded in $SA_{\alpha}$, $Size_{neighbor,\beta}$ is
+		based on the solution of $SA_{\alpha}$.
+		It is calculated according to Equation \ref{equa:neighbor_size_b}.
+		In the equation, $\lvert memtypes_{allocated} \rvert$ is the number of
+		allocated memory types in the current solution of $SA_{\alpha}$.
+		The length of $S_{\beta}$ is actually the total number of profiles of the application.
+		\begin{equation}
+		\label{equa:neighbor_size_b}
+			Size_{neighbor,\beta}=\lvert memtypes_{allocated} \rvert \cdot \text{length of } S_{\beta} 
+		\end{equation}
+		
+		For the outer loop termination, $T_{low}$ is still used for both
+		$SA_{\alpha}$ and $SA_{\beta}$.
+		The determination of $T_{low}$ is the same discussed in the first approach.
+	
+		\subsection{Problem discussion}
+		\label{subsec:problem_2}
+		The implementation of the nest simulated annealing algorithm is divided to two steps.
+		The fist step is to implement $SA_{\beta}$ with a given valid memory allocation.
+		For the evaluation of $SA_{\beta}$, the same testing scenario introduced in approach 1
+		is used. The best memory allocation provided by the ILP approach is given to $SA_{\beta}$.
+		The results of $SA_{\beta}$ are shown in
+		Figure \ref{fig:stage_2_results} and they are compared with the ILP results.
+		From the figure, it can be seen that $SA_{\beta}$ can yield the optimal or the
+		near optimal of solutions under the precondition that the optimal solution of
+		$SA_{\alpha}$ is given.
+		However, the following problems are found during the implementation of $SA_{\alpha}$.
+		\begin{figure}[htb]
+			\begin{center}
+				\includegraphics[width=0.7\textwidth]{stage_2_results}
+				\caption{Results Comparison Between $SA_{\beta}$ and ILP}
+				\label{fig:stage_2_results}
+			\end{center}
+		\end{figure}		
+		
+		Problem 1: The execution time of the nest simulated annealing is unacceptable in
+		practice.
+		
+		Because $SA_{\alpha}$ and $SA_{\beta}$ is nested, the overall execution time
+		$t_{overall}$ can be calculated according to Equation \ref{equa:nested_time}.
+		In the equation, $iteration_{out,\alpha}$ and $iteration_{in,\alpha}$ are the
+		number of the outer loop iterations and the number of the inner loop iterations in $SA_{\alpha}$.
+		$t_{\beta}$ is the execution time of $SA_{\beta}$.
+		According to Equation \ref{equa:iteration_innerloop} and Equation
+		\ref{equa:neighbor_size_a},
+		$iteration_{in,\alpha} $ equals to $2 \cdot \text{ length of $S_{\alpha}$ } \cdot F_{iteration}$.
+		Based on the testing scenario, $\text{length of $S_{\alpha}$}=79$ and $F_{iteration}=1$.
+		Thus, $iteration_{in,\alpha}$ equals to 158.
+		The measured average $t_{\beta}$ is around 30 seconds.
+		Assume $iteration_{out,\alpha}=1$, then
+		$t_{overall}=1 \cdot 158 \cdot 30=4740$ seconds $\approx 1.32$ hours.
+		This is the overall execution time when the outer loop of $SA_{\alpha}$ is
+		performed only once. It is already an unexpected time for the optimization
+		process.
+		However, the average $iteration_{out,\alpha}$ in the testing scenario is always
+		greater than 50.
+		Even if $t_{\beta}$ is decreased by optimizing $SA_{\beta}$ from programming
+		side, $t_{overall}$ is still unacceptable in practice.
+		The cost function in the simulated annealing algorithm should be the mathematical
+		computations that can be executed very fast by computers.
+		However, the cost function in $SA_{\alpha}$ is a simulated annealing algorithm
+		in this approach. This is the reason of this problem.
+		\begin{equation}
+		\label{equa:nested_time}
+			t_{overall}=iteration_{out,\alpha} \cdot iteration_{in,\alpha} \cdot t_{\beta}
+		\end{equation}
+		
+		Problem 2: Invalid $S_{\alpha}$ is provided to $SA_{\beta}$.
+		
+		The verification of constraint 4-1 can not guarantee the validity of $S_{\alpha}$.
+		In $ConstraintsCheck_{\alpha}$ (Algorithm \ref{algo:constrain_check_a}),
+		the verification of constraint 4-1 only compares $space_{provided}$ and
+		$space_{required}$. However, satisfying constraint 4-1 does not ensure $S_{\alpha}$
+		is valid. There is one fact ignored by constraint 4-1. The fact is that one profile
+		can not be distributed to different memory types. Consider the following situation.
+		There are two memory types provided, namely $M_{512}$ and $M_{256}$. The subscripts
+		of their names are the memory sizes. Suppose a profile $P$ with size 700 needs to
+		be bound to the memory type and only 2 instances are allowed.
+		Figure \ref{fig:cons_4_1_invalid} shows the different combinations of the memory
+		instances and their validities according to constraint 4-1 and the original
+		constraint 4. In the case that one instance is allocated for both memory types,
+		the allocation is valid according to constraint 4-1 because
+		$space_{provided} > space_{required}$. However, this allocation is not valid
+		according to the original constraint 4 due to the fact that profiles can not
+		be distributed to multiple memory types.
+		\begin{figure}[htb]
+			\begin{center}
+				\includegraphics[width=0.7\textwidth]{constraint_4_1}
+				\caption{Example For Generating Invalid $S_{\alpha}$}
+				\label{fig:cons_4_1_invalid}
+			\end{center}
+		\end{figure}
+	
+		Because of the above problems, this approach only obtains the success for
+		$SA_{\beta}$. Due to the unacceptable execution time, the
+		evaluation of $SA_{\alpha}$ is not performed.
+		In the next section, an enhancement of the nested simulated
+		annealing algorithm is introduced.
+		
+	\section{Allocation and binding in independent SAs}
+	\label{sec:stage_3}
+	This approach is to solve the problems of nested simulated annealing algorithm
+	discussed in Section \ref{sec:stage_2}. The basic idea of this approach is
+	still using $SA_{\alpha}$ and $SA_{\beta}$ to optimize the memory allocation
+	and the profile binding respectively. However, $SA_{\alpha}$ and $SA_{\beta}$
+	are independent from each other.
+	
+	Instead of evoking $SA_{\beta}$, $SA_{\alpha}$ in this approach calculates
+	the memory power consumption in its cost function.
+	But the power consumption can not be calculated with only the memory
+	allocation.
+	To solve this problem, the method $SortedBind()$ is used to
+	provide an assumed binding information to $SA_{\alpha}$.
+	Another purpose of $SortedBind()$ is to avoid generating invalid $S_{\alpha}$
+	due to constraint 4-1 verification.
+	Algorithm \ref{algo:sort_bind} shows the pseudo-code of $SortedBind()$.
+	In the algorithm, $d$ is the profile duty cycle.
+	$p_{r}$ and $p_{w}$ are the profile read and write probability respectively.
+	The free space of a memory type is the memory space that is not be occupied.
+	The details of $SortedBind()$ and its basis are introduced later in Section
+	\ref{subsec:design_3}.
+	\input{./algorithms/sorted_binding}
+	
+	The common problem of the first two approaches
+	is that the number of the allocated memory instances always reaches constraint
+	$mems_{max}$.
+	To avoid this problem, this approach introduces the level concept to the memory
+	allocation optimization. In each allocation optimization level, only a fixed
+	number of memory instances are allowed. Let $mems_{allowed}$ denote this fixed
+	number. Then only the allocations with exact $mems_{allowed}$ instances are
+	taken into consideration for a certain level.
+	For example, suppose $mems_{allowed}=4$ in an allocation optimization level.
+	Then all the potential allocations contain exactly 4 memory instances.
+	$SA_{\alpha}$ is performed for each optimization level to obtain the corresponding
+	optimal memory allocation. Then $SA_{\beta}$ is used to seek for the optimal
+	profile binding of these allocations. Lastly, the pair of allocation and binding
+	with minimum power cost is output as the final result of the optimization process.
+	Figure \ref{fig:sa_level} shows an allocation optimal level structure with the
+	constraint $mems_{max}=4$.
+	
+	This approach mainly focus on the design of $SA_{\alpha}$ and the enhancement
+	for $SA_{\beta}$ because $SA_{\beta}$ can already yield good results.
+	In the following, the seven design questions are answered in Section
+	\ref{subsec:design_3}. Section \ref{subsec:problem_3} discusses the findings
+	and problems of this approach.
+	\begin{figure}[h]
+		\begin{center}
+			\includegraphics[width=0.7\textwidth]{sa_level}
+			\caption{Allocation Optimization Levels with $mems_{max}=4$}
+			\label{fig:sa_level}
+		\end{center}
+	\end{figure}
+
+		\subsection{Design process}
+		\label{subsec:design_3}
+		Question \ref{ques:1}: What is the representation of solutions?
+		
+		In this approach, the representation of solutions for both $SA_{\alpha}$
+		and $SA_{\beta}$ are the same with the nested simulated annealing algorithm.
+		
+		Question \ref{ques:2}: How to generate the neighboring solutions?
+		
+		Because the number of allocated memory instances is fixed for solutions in
+		$SA_{\alpha}$, the method of generating $S_{\alpha}$ should follow this rule.
+		There are two steps in $Neighbor_{\alpha}()$.
+		The first step is to select one allocated memory type in $S_{\alpha,curr}$
+		and decrease its number of instances by one.
+		The second step is to choose an arbitrary memory type in $S_{\alpha,curr}$
+		and increase its number of instances by one.
+		Algorithm \ref{algo:sa_alfa_neigh_1} shows the pseudo-code of
+		$Neighbor_{\alpha}()$.
+		In the algorithm, $ConstraintsCheck_{\alpha}()$ is the same one in the nested
+		simulated annealing algorithm. $SortedBind()$ is added to the check condition
+		to guarantee the validity of $SA_{\alpha,neigh}$.
+		\input{./algorithms/sa_alfa_neigh_1}
+		
+		For $SA_{\beta}$, neighboring solutions are generated by the same mechanism used
+		in the nested simulated annealing (Algorithm \ref{algo:neighbor_beta}).
+				
+		Question \ref{ques:3}: What is the cost function?
+		
+		In this approach, the costs of both $S_{\alpha}$ and $S_{\beta}$
+		are the memory power consumption. They can be calculated based on the formal
+		power model. The cost function of $SA_{\beta}$ is the same one in the nested
+		simulated annealing algorithm.
+		However, the cost function of $SA_{\alpha}$ needs the binding information
+		provided by $SortedBind()$ in order to calculate the memory power cost.
+		
+		The following discussion is about the basis of $SortedBind()$.
+		In order to evaluate the memory allocation provided by $SA_{\alpha}$,
+		the corresponding binding is required. But for a given allocation,
+		there are lots of potential bindings of a set of application profiles.
+		Different bindings yield different memory power costs. This will affect
+		the evaluation results.
+		Thus, a standard should be defined for selecting the bindings for the
+		memory allocation. For the same set of application profiles, if the
+		best profile binding is selected for all potential memory allocations, the
+		evaluation becomes uniform. For defining the best binding, the following
+		assumptions are made.
+		The best application profile binding is obtained by mapping frequently
+		accessed profiles to small memory types. The profile access frequency
+		is dependent on the product of the profile duty cycle and the profile access
+		probability. The profile access probability in ROM mode is the profile
+		read probability. The profile access probability in RAM mode is the
+		sum of profile read probability and write probability.
+		These assumptions are made based on the principle of memory partitioning and the
+		ILP results provided by the authors of \cite{Strobel2016}.
+		In algorithm \ref{algo:sort_bind}, $SortedBind()$ sorts the memory types and
+		the application profiles. Then it binds each profile to the memory types
+		according to these assumptions. If all profiles are bound successfully,
+		the quality of the memory allocation provided in $SA_{\alpha}$ can be
+		evaluated based on this binding.
+		 
+		Question \ref{ques:4}: How to implement the metropolis criterion?
+		
+		The implementation of the metropolis criterion for both $SA_{\alpha}$
+		and $SA_{\beta}$ are the same with the nested simulated annealing algorithm.
+		
+		Question \ref{ques:5}: What is the cooling schedule?
+		
+		The same cooling schedule in the nested simulated annealing algorithm is
+		used for both $SA_{\alpha}$ and $SA_{\beta}$.
+		
+		Question \ref{ques:6}: How to determinate the initial solution and the
+		initial temperature?
+		
+		In this approach, the initial solution for both $SA_{\alpha}$
+		and $SA_{\beta}$ are generated randomly instead of being set manually.
+		This is for the verification of the feature that simulated annealing
+		is not sensitive to the initial solution.
+		
+		To improve the accuracy of initial temperature $T_{0}$, a second step is
+		add to the determination of $T_{0}$. After computing $T_{0}$ according
+		Equation \ref{equa:t_0_1}, the inner loop of the simulated annealing
+		algorithm is performed once at $T_{0}$.
+		During the execution of the inner loop, the acceptance probability is measured.
+		Then the measured acceptance probability $P_{measured}$ is compared with the
+		expected acceptance probability $P_{0}$. If $P_{measured}$ is smaller than
+		$P_{0}$, $T_{0}$ is doubled. The same process is repeated until $P_{measured}$
+		is larger than $P_{0}$. It makes sure that $T_{0}$ is high enough so that
+		random solutions can be accepted in the metropolis criterion.
+		
+		Question \ref{ques:7}: How to terminate the inner loop and the outer loop?
+		
+		The inner loop termination mechanism of the nested simulated annealing algorithm
+		is used for both $SA_{\alpha}$ and $SA_{\beta}$ in this approach.
+		However, $Size_{neigh,\alpha}$ is different because $Neighbor_{\alpha}()$
+		is modified in this approach. Equation \ref{equa:neigh_size_alfa_2}
+		shows the computation for $Size_{neigh,\alpha}$ in this approach.
+		$\lvert memtypes_{allocated} \rvert$ is the number of allocated memory types in
+		the current solution of $SA_{\alpha}$. The length of $S_{\alpha}$ is actually
+		the total number of memory types in the memory set. The computation of $Size_{neigh,\beta}$ is
+		still the same one of the nested simulated annealing because $Neighbor_{\beta}()$
+		is not changed in this approach.
+		\begin{equation}
+		\label{equa:neigh_size_alfa_2}
+			Size_{neigh,\alpha}=\lvert memtypes_{allocated} \rvert \cdot \text{ length of } S_{\alpha}
+		\end{equation}
+		
+		For the termination of the outer loop of simulated annealing algorithm,
+		a new mechanism is introduced in this approach. During the execution of inner loop,
+		the acceptance probability is measured. A low threshold $P_{threshold}$ for the
+		acceptance probability is defined. If the measured acceptance probability is
+		smaller than $P_{threshold}$ in five successive iterations, the outer loop
+		terminates. The value of $P_{threshold}$ should be a small positive real number
+		close to 0. In this approach, $P_{threshold}$ is set to $10^{-3}$ and it
+		can be adjusted by experiments.
+		
+		\subsection{Problem discussion}
+		\label{subsec:problem_3}
+		For the evaluation of this approach, the same testing scenario introduced in the previous
+		approach is used. As discussed in the nested simulated annealing algorithm,
+		$SA_{\beta}$ can yield good enough profile bindings for a given memory allocation.
+		Therefore, the functionality of $SA_{\alpha}$ is mainly focused in this approach.
+		The evaluation details of $SA_{\beta}$ are represented in Chapter \ref{chap:evaluation}.
+		
+		To verify its functionality, $SA_{\alpha}$ is executed multiple times under the same
+		testing scenario. Figure \ref{fig:stage_3_results_rom_ipres} shows the result.
+		\begin{figure}[htb]
+			\begin{center}
+				\includegraphics[width=0.9\textwidth]{stage_3_results_rom_ipres}
+				\caption{Memory Allocation Comparison Between $SA_{\alpha}$ and ILP (ROM)}
+				\label{fig:stage_3_results_rom_ipres}
+			\end{center}
+		\end{figure}		
+		From the figure it can be seen that the memory allocation provided by $SA_{\alpha}$ is
+		same with the allocation provided by ILP. However, $SA_{\alpha}$ is executed with only
+		one testing scenario. To verify its functionality further, the same application in
+		RAM mode is used.
+		Figure \ref{fig:stage_3_results_ram_ipres} shows the memory allocations provided by $SA_{\alpha}$
+		and ILP. From the figure it is can be seen that the two memory allocations are different
+		from each other. By analyzing the algorithm execution process and its results,
+		the following problems are found.
+		\begin{figure}[htb]
+			\begin{center}
+				\includegraphics[width=0.9\textwidth]{stage_3_results_ram_ipres}
+				\caption{Memory Allocation Comparison Between $SA_{\alpha}$ and ILP (RAM)}
+				\label{fig:stage_3_results_ram_ipres}
+			\end{center}
+		\end{figure}
+
+		Problem 1: Lager memory types are always allocated.
+		
+		After executing $SA_{\alpha}$ multiple times, it is found that $SA_{\alpha}$ always
+		allocates instances for memory types with larger size. For example, in Figure
+		\ref{fig:stage_3_results_ram_ipres}, two instances are allocated for memory type with size
+		4194304 in $SA_{\alpha}$, which is much larger than the memory type allocated in
+		ILP. To illustrate this problem clearly, let $allocation_{SA}$ and $allocation_{ILP}$
+		denote the memory allocations provided by $SA_{\alpha}$ and ILP respective. The data
+		in Figure \ref{fig:stage_3_results_ram_ipres} is used for $allocation_{SA}$ and $allocation_{ILP}$.
+		Assume the current solution of $SA_{\alpha}$ is $allocation_{SA}$ and the searching
+		process is guided towards to $allocation_{ILP}$. In order to reach $allocation_{ILP}$,
+		the following steps should be performed according to $Neighbor_{\alpha}$.
+		The first step is to delete one instance from the four allocated memory types in $allocation_{SA}$.
+		The second step is to add one instance for memory type MEM\_1048576\_16.
+		These two steps are repeated until eight instances are allocated for MEM\_1048576\_16.
+		In the testing scenario, the total number of memory types is 79.
+		The probability of selecting MEM\_1048576\_16 out of 79 memory types is $\frac{1}{79}$.
+		In addition, MEM\_1048576\_16 should be selected eight times continuously. The
+		probability of moving from $allocation_{SA}$ to $allocation_{ILP}$ is
+		$\frac{1}{79}^{8} \approx 0$. This means that it is almost impossible to reach
+		$allocation_{ILP}$ from $allocation_{SA}$. This problem is caused by the mechanism
+		for generating neighboring solutions in $SA_{\alpha}$.
+		
+		After examining the input application profile file for RAM carefully, another phenomenon is found.
+		There are some profiles with extremely large size. For example, there is a profile with size 7973948
+		in above testing scenario. In order to satisfy the constraints, at least one memory type with
+		large enough memory space should be allocated. In Figure \ref{fig:stage_3_results_ram_ipres}, both
+		$SA_{\alpha}$ and ILP provide such memory type. Suppose $Neighbor_{\alpha}()$ selects
+		MEM\_4194304\_16 and deletes one instance first. If an instance is added for a memory type with
+		size smaller than 7973948, the generated neighboring solution becomes invalid. Because
+		there is no memory type providing enough memory space required by the large profile.
+		Thus, $Neighbor_{\alpha}()$ always adds instances for lager memory types.
+		
+		Problem 2: Memories with same size but different sub-bankings can not be differentiated.
+		
+		In the method $SortedBind()$, the memory types are sorted according to their sizes.
+		However, their sub-banking parameters are not taken into consideration. This will affect
+		the solution quality provided by $SA_{\alpha}$. Figure \ref{stage_3_results_huffman_rom}
+		shows the memory allocations provided by $SA_{\alpha}$ and ILP for $Huffman$
+		application in ROM mode. From the figure, it is can be seen that $SA_{\alpha}$ allocates
+		instances for MEM\_512\_2 while ILP allocates instances for MEM\_512\_1.
+		Both memory types have the same size but their numbers of sub-bankings are different.
+		\begin{figure}[htb]
+			\begin{center}
+				\includegraphics[width=0.9\textwidth]{stage_3_results_huffman_rom}
+				\caption{Memory Allocation Comparison Between $SA_{\alpha}$ and ILP (Huffman, RAM)}
+				\label{fig:stage_3_results_huffman_rom}
+			\end{center}
+		\end{figure}		
+		
+		Problem 3: This approach depends on unproven assumptions.
+		
+		The assumptions made for $SortedBind()$ in this approach are based on the principle and
+		the observation of ILP results provided by the authors of \cite{Strobel2016}.
+		Their usage should be verified scientifically.

@@ -1,0 +1,22 @@
+\setlength{\textfloatsep}{0.2cm}
+\begin{algorithm2e}[htb]
+	\KwIn{$S_{\beta}$, $S_{\alpha}$}
+	\KwOut{void}
+		find the set of memory types $mt_{violating}$ violating constraint 4 in $S_{\alpha}$\;
+		\ForEach{mt_{i} in $mt_{violating}$}
+		{
+			find the set of profiles bound to $mt_{i}$ according to $S_{\beta}$\;
+			take out a set of profiles $p_{out}$ until constraint 4 is satisfied\;
+			\ForEach{$p_{i}$ in $p_{out}$}
+			{
+				find a memory type in $S_{\alpha}$ with enough free memory space for $p_{i}$\;
+				change the corresponding element in $S_{\beta}$ to the index of 
+			}
+		}
+		o
+		
+		
+	\caption{Local Search Algorithm}
+	\label{algo:local_search}
+\end{algorithm2e}
+\setlength{\textfloatsep}{0.2cm}
